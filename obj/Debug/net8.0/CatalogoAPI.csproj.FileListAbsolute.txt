@@ -102,3 +102,4 @@ C:\Portfolio\CatalogoAPI\CatalogoAPI\obj\Debug\net8.0\refint\CatalogoAPI.dll
 C:\Portfolio\CatalogoAPI\CatalogoAPI\obj\Debug\net8.0\CatalogoAPI.pdb
 C:\Portfolio\CatalogoAPI\CatalogoAPI\obj\Debug\net8.0\CatalogoAPI.genruntimeconfig.cache
 C:\Portfolio\CatalogoAPI\CatalogoAPI\obj\Debug\net8.0\ref\CatalogoAPI.dll
+C:\Portfolio\CatalogoAPI\CatalogoAPI\obj\Debug\net8.0\CatalogoAPI.sourcelink.json
