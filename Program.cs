@@ -1,4 +1,5 @@
 using CatalogoAPI.Context;
+using CatalogoAPI.Repositories;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
@@ -20,6 +21,8 @@ string? mySqlConnection = builder.Configuration.GetConnectionString("DefaultConn
 builder.Services.AddDbContext <AppDbContext>(options =>
         options.UseMySql(mySqlConnection, 
         ServerVersion.AutoDetect(mySqlConnection)));
+
+builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 
 var app = builder.Build();
 

@@ -1,5 +1,6 @@
 ﻿using CatalogoAPI.Context;
 using CatalogoAPI.Models;
+using CatalogoAPI.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,61 +11,80 @@ namespace CatalogoAPI.Controllers
     [ApiController]
     public class CategoriasController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly ICategoriaRepository _repository;
 
-        public CategoriasController(AppDbContext context)
+        public CategoriasController(ICategoriaRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
-        [HttpGet("produtos")]
-        public ActionResult<IEnumerable<Categoria>> GetCategoriasProdutos()
-        {
-            return _context.Categorias.Include(p=>p.Produtos).AsNoTracking().ToList();
-        }
+
+
+
+
+
+        //[HttpGet("produtos")]
+        //public ActionResult<IEnumerable<Categoria>> GetCategoriasProdutos()
+        //{
+        //    return _repository.GetCategorias().Include(p=>p.Produtos).AsNoTracking().ToList();
+        //}
+
+
+
 
         [HttpGet]
         public ActionResult<IEnumerable<Categoria>> Get()
         {
-            try
-            {
-                //throw new DataMisalignedException();
-                return _context.Categorias.AsNoTracking().ToList();
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, 
-                    "Ocorreu um erro ao tratar sua solicitação.");
-            }
+            var categirias = _repository.GetCategorias();        
             
+            return Ok (categirias);
         }
+
+
+
+
+
 
         [HttpGet("{id:int}", Name = "ObterCategoria")]
         public ActionResult<Categoria> Get(int id)
         {
-            var categoria = _context.Categorias.FirstOrDefault(p => p.CategoriaId == id);
+            var categoria = _repository.GetCategoria(id);
 
             if (categoria == null)
             {
-                return NotFound("Categoria não encontrada...");
+                return NotFound($"Categoria com id= {id} não encontrada...");
             }
 
             return Ok(categoria);
         }
+
+
+
+
+
+
+
 
         [HttpPost]
         public ActionResult Post(Categoria categoria)
         {
             if (categoria is null)
             {
-                return BadRequest();
+                return BadRequest("Dados inválidos");
             }
-            _context.Categorias.Add(categoria);
-            _context.SaveChanges();
+
+            var categoriaCriada = _repository.Create(categoria);
 
             return new CreatedAtRouteResult("ObterCategoria",
-                new { id = categoria.CategoriaId }, categoria);
+                new { id = categoriaCriada.CategoriaId }, categoriaCriada);
         }
+
+
+
+
+
+
+
 
         [HttpPut("{id:int}")]
         public ActionResult Put(int id, Categoria categoria)
@@ -74,26 +94,31 @@ namespace CatalogoAPI.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(categoria).State = EntityState.Modified;
-            _context.SaveChanges();
+            _repository.Update(categoria);
 
             return Ok(categoria);
         }
 
+
+
+
+
+
+
+
         [HttpDelete("{id:int}")]
         public ActionResult<Categoria> Delete(int id)
         {
-            var categoria = _context.Categorias.FirstOrDefault(p => p.CategoriaId == id);
+            var categoria = _repository.GetCategoria(id);
 
             if (categoria == null)
             {
                 return NotFound("Categoria não encontrada...");
             }
 
-            _context.Categorias.Remove(categoria);
-            _context.SaveChanges();
+            var categoriaExcluida = _repository.Delete(id);
 
-            return Ok(categoria);
+            return Ok(categoriaExcluida);
         }
 
     }
